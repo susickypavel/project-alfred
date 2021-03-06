@@ -6,4 +6,8 @@
         <RootNamespace>project_alfred</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Discord.Net" Version="2.3.0" />
+    </ItemGroup>
+
 </Project>

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace project_alfred.Services
 {
@@ -12,27 +10,33 @@ namespace project_alfred.Services
         private readonly IConfigurationRoot _config;
         private readonly DiscordSocketClient _client;
         
-        public BootService(IServiceProvider provider)
+        public BootService(DiscordSocketClient client, IConfigurationRoot config)
         {
-            _config = provider.GetRequiredService<IConfigurationRoot>();
-            // TODO: extract to service
-            _client = new DiscordSocketClient();
+            _config = config;
+            _client = client;
         }
         
         public async void Boot()
         {
-            _client.Log += Log;
-            
             var token = _config["token"];
-            
-            await _client.LoginAsync(TokenType.Bot, token);
-            await _client.StartAsync();
-        }
-        
-        private Task Log(LogMessage msg)
-        {
-            Console.WriteLine(msg.ToString());
-            return Task.CompletedTask;
+
+            try
+            {
+                await _client.LoginAsync(TokenType.Bot, token);
+                await _client.StartAsync();
+            }
+            catch (Discord.Net.HttpException error)
+            {
+                Console.Write($@"Connection to discord bot via token has failed, error message:
+{error.Message}");
+                Environment.Exit(1);
+            }
+            catch (Exception error)
+            {
+                Console.Write($@"General Exception has occured: 
+{error.Message}");
+                Environment.Exit(1);
+            }
         }
     }
 }

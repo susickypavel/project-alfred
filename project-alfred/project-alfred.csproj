@@ -8,6 +8,12 @@
 
     <ItemGroup>
       <PackageReference Include="Discord.Net" Version="2.3.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0-preview.1.21102.12" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0-preview.1.21102.12" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="bin\Debug\net5.0\config.json" />
     </ItemGroup>
 
 </Project>

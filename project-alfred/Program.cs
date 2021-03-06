@@ -1,22 +1,31 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 
 namespace project_alfred
 {
     class Program
     {
         private DiscordSocketClient _client;
+        private IConfiguration _config;
         
-        public static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();   
+        public static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
 
+        public Program()
+        {
+            _client = _client = new DiscordSocketClient();
+            _client.Log += Log;
+
+            _config = new ConfigurationBuilder()
+                .AddJsonFile("config.json").Build();
+        }
+        
         public async Task MainAsync()
         {
-            _client = new DiscordSocketClient();
-            _client.Log += Log;
-            
-            var token = "TODO: implement environment variables";
+            var token = _config["token"];
             
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();

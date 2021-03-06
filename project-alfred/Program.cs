@@ -1,42 +1,22 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+
+using project_alfred.Services;
 
 namespace project_alfred
 {
-    class Program
+    internal class Program
     {
-        private DiscordSocketClient _client;
-        private IConfiguration _config;
-        
         public static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
 
-        public Program()
+        private async Task MainAsync()
         {
-            _client = _client = new DiscordSocketClient();
-            _client.Log += Log;
+            var services = new ServiceCollection();
+            services.AddSingleton<BootService>();
 
-            _config = new ConfigurationBuilder()
-                .AddJsonFile("config.json").Build();
-        }
-        
-        public async Task MainAsync()
-        {
-            var token = _config["token"];
-            
-            await _client.LoginAsync(TokenType.Bot, token);
-            await _client.StartAsync();
+            var serviceProvider = services.BuildServiceProvider();
 
-            await Task.Delay(-1);
-        }
-        
-        private Task Log(LogMessage msg)
-        {
-            Console.WriteLine(msg.ToString());
-            return Task.CompletedTask;
+            serviceProvider.GetService<BootService>().Boot();
         }
     }
 }

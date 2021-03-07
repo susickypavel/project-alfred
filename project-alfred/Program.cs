@@ -29,9 +29,9 @@ namespace project_alfred
 
             var serviceProvider = services.BuildServiceProvider();
 
-            serviceProvider.GetService<LogService>();
-            serviceProvider.GetService<BootService>().Boot();
-            serviceProvider.GetService<BotCommandService>().InitializeAsync();
+            serviceProvider.GetRequiredService<LogService>();
+            serviceProvider.GetRequiredService<BootService>().Boot();
+            await serviceProvider.GetRequiredService<BotCommandService>().InitializeAsync();
             
             await Task.Delay(-1);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;

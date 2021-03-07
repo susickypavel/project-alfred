@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,17 +18,20 @@ namespace project_alfred
                 .AddJsonFile("config.json").Build();
 
             var client = new DiscordSocketClient();
-            
+
             var services = new ServiceCollection()
                 .AddSingleton(config)
                 .AddSingleton(client)
                 .AddSingleton<LogService>()
-                .AddSingleton<BootService>();
+                .AddSingleton<BootService>()
+                .AddSingleton<CommandService>()
+                .AddSingleton<BotCommandService>();
 
             var serviceProvider = services.BuildServiceProvider();
 
             serviceProvider.GetService<LogService>();
             serviceProvider.GetService<BootService>().Boot();
+            serviceProvider.GetService<BotCommandService>().InitializeAsync();
             
             await Task.Delay(-1);
         }

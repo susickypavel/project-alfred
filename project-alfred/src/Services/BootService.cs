@@ -23,7 +23,7 @@ namespace project_alfred.Services
 
             try
             {
-                await _client.LoginAsync(TokenType.Bot, "token");
+                await _client.LoginAsync(TokenType.Bot, token);
                 await _client.StartAsync();
             }
             catch (Discord.Net.HttpException error)

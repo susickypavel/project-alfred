@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+
+using project_alfred.TypeReaders;
 
 namespace project_alfred.Services
 {
@@ -26,6 +29,7 @@ namespace project_alfred.Services
 
         public async Task InitializeAsync()
         {
+            _command.AddTypeReader(typeof(Url), new UrlTypeReader());
             await _command.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
         
@@ -54,17 +58,47 @@ namespace project_alfred.Services
 
         private async Task OnCommandExecuted(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {
-            if (!command.IsSpecified) {
-                System.Console.WriteLine($@"[Fail] - Command {context.Message} has failed.");
-                return;
+            switch (result.Error)
+            {
+                case CommandError.UnknownCommand:
+                    await context.Channel.SendMessageAsync("To neumím");
+                    break;
+                case CommandError.ParseFailed:
+                    await context.Channel.SendMessageAsync(result.ErrorReason);
+                    break;
+                case CommandError.BadArgCount:
+                    await context.Channel.SendMessageAsync(GetCommandSyntax(command));
+                    break;
+                case CommandError.ObjectNotFound:
+                    break;
+                case CommandError.MultipleMatches:
+                    await context.Channel.SendMessageAsync("LOL");
+                    break;
+                case CommandError.UnmetPrecondition:
+                    break;
+                case CommandError.Exception:
+                    break;
+                case CommandError.Unsuccessful:
+                    break;
+                case null:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private string GetCommandSyntax(Optional<CommandInfo> command)
+        {
+            var builder = new StringBuilder($"Zkus to takhle: `+{command.Value.Name}");
+            
+            foreach (var parameter in command.Value.Parameters)
+            {
+                builder.Append($" <{parameter.Name}>");
             }
 
-            if (result.IsSuccess) {
-                System.Console.WriteLine($@"[Success] - Command {context.Message} executed.");
-                return;
-            }
-            
-            await context.Channel.SendMessageAsync($"Sorry kámo, něco se totálně posralo.");
+            builder.Append("`");
+
+            return builder.ToString();
         }
     }
 }

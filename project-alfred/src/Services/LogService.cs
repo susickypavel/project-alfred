@@ -15,7 +15,7 @@ namespace project_alfred.Services
             command.Log += Log;
         }
 
-        private Task Log(LogMessage msg)
+        public Task Log(LogMessage msg)
         {
             Console.WriteLine($@"[{msg.Severity}] - {msg.Message}");
             return Task.CompletedTask;

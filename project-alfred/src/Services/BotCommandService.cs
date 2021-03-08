@@ -16,12 +16,14 @@ namespace project_alfred.Services
         private readonly DiscordSocketClient _client;
         private readonly CommandService _command;
         private readonly IServiceProvider _services;
+        private readonly LogService _logger;
         
-        public BotCommandService(IServiceProvider services, DiscordSocketClient client, CommandService command)
+        public BotCommandService(IServiceProvider services, DiscordSocketClient client, CommandService command, LogService logger)
         {
             _services = services;
             _client = client;
             _command = command;
+            _logger = logger;
 
             _client.MessageReceived += OnMessageReceived;
             _command.CommandExecuted += OnCommandExecuted;
@@ -85,6 +87,9 @@ namespace project_alfred.Services
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            
+            var commandName = command.IsSpecified ? command.Value.Name : "An unknown command";
+            await _logger.Log(new LogMessage(LogSeverity.Info, "CommandExecution", $@"{commandName} was executed at {DateTime.UtcNow} by {context.User.Id} ({context.User.Username}#{context.User.Discriminator})."));
         }
 
         private string GetCommandSyntax(Optional<CommandInfo> command)

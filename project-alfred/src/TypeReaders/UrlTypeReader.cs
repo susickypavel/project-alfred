@@ -5,18 +5,34 @@ using Discord.Commands;
 
 namespace project_alfred.TypeReaders
 {
-    public readonly struct Url
+    public struct Url
     {
-        public string Value { get; }
+        private string _value;
 
-        public Url(string value)
+        public bool IsValid { get; private set; }
+        
+        public string Value
         {
-            Value = value;
+            get => _value;
+            set
+            {
+                var match = Regex.Match(value, "^(https)://open.spotify.com/track/(.+)([?]si=.*)?");
+                
+                if (match.Success) {
+                    _value = match.Value;
+                    IsValid = true;
+                }
+                else {
+                    _value = value;
+                    IsValid = false;
+                }
+            }
         }
         
-        public bool IsValid()
+        public Url(string value) : this()
         {
-            return Regex.IsMatch(Value, "^(https)://open.spotify.com/track/(.+)([?]si=.*)?");
+            IsValid = false;
+            Value = value;
         }
     }
 
@@ -26,7 +42,7 @@ namespace project_alfred.TypeReaders
         {
             var url = new Url(input);
             
-            if (url.IsValid())
+            if (url.IsValid)
             {
                 return Task.FromResult(TypeReaderResult.FromSuccess(url));
             }

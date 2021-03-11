@@ -12,6 +12,9 @@ namespace project_alfred.models
             modelBuilder.Entity<FetchLog>()
                 .Property(f => f.CreatedAt)
                 .HasDefaultValueSql("now()");
+
+            modelBuilder.Entity<SongRecord>()
+                .HasKey(s => new {s.user, s.publishedAt, s.url});
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

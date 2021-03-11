@@ -1,39 +1,50 @@
-﻿using System;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
-
+using Discord;
 using Discord.Commands;
-
 using project_alfred.models;
 
 namespace project_alfred.Modules
 {
+    
     public class QueryCommands : ModuleBase<SocketCommandContext>
     {
+        private readonly string[] _medals = { "🥇", "🥈", "🥉" };
+        
         [Command("leaderboard")]
-        public async Task ListSongs()
+        public async Task LeaderboardCommand()
         {
-            var stringBuilder = new StringBuilder("```\n\r");
-            stringBuilder.AppendLine("+--------------------+--------+");
-
-            await using (var context = new SongRecordContext())
+            var embedBuilder = new EmbedBuilder
             {
-                var temp = context.SongRecords
+                Color = Color.Gold,
+                Title = "Leaderboard",
+                Description = "Who shares the most?",
+                Author = new EmbedAuthorBuilder
+                {
+                    Name = "Alfred",
+                    IconUrl = "https://discord.com/assets/dd4dbc0016779df1378e7812eabaa04d.png"
+                    // N2H: Custom Icon <3
+                }
+            };
+
+            await using (var db = new SongRecordContext())
+            {
+                var leaders = db.SongRecords
                     .AsQueryable()
                     .GroupBy(song => song.user)
-                    .Select(g => new { name = g.Key, count = g.Count() });
+                    .OrderByDescending(group => group.Count())
+                    .Select(group=> new {id = group.Key, count = group.Count() }).ToArray();
 
-                foreach (var VARIABLE in temp)
+                for (var i = 0; i < leaders.Length; i++)
                 {
-                    stringBuilder.AppendLine($"|{VARIABLE.name,20}|{VARIABLE.count,8}|");
-                    stringBuilder.AppendLine("+--------------------+--------+");
-                }
-            }
+                    var leader = leaders[i];
+                    var user = Context.Guild.GetUser(leader.id);
 
-            stringBuilder.Append("```");
-            
-            await ReplyAsync(stringBuilder.ToString());
+                    embedBuilder.AddField($"{(i < _medals.Length ? _medals[i] : null)} {user.Username}#{user.DiscriminatorValue}", $"{leader.count}", true);
+                }
+
+                await ReplyAsync(null, false, embedBuilder.Build());
+            }
         }
     }
 }

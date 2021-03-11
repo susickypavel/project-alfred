@@ -16,8 +16,9 @@ namespace project_alfred
         {
             var config = new ConfigurationBuilder()
                 .AddJsonFile("config.json").Build();
-
-            var client = new DiscordSocketClient();
+            
+            var discordConfig = new DiscordSocketConfig();
+            var client = new DiscordSocketClient(discordConfig);
 
             var services = new ServiceCollection()
                 .AddSingleton(config)

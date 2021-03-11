@@ -14,7 +14,7 @@ namespace project_alfred.models
                 .HasDefaultValueSql("now()");
 
             modelBuilder.Entity<SongRecord>()
-                .HasKey(s => new {s.user, s.publishedAt, s.url});
+                .HasKey(s => new {s.user, s.url});
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

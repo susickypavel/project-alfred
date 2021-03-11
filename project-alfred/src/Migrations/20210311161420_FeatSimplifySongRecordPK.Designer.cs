@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using project_alfred.models;
@@ -9,9 +10,10 @@ using project_alfred.models;
 namespace project_alfred.Migrations
 {
     [DbContext(typeof(SongRecordContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210311161420_FeatSimplifySongRecordPK")]
+    partial class FeatSimplifySongRecordPK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

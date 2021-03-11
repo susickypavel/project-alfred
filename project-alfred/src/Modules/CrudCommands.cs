@@ -19,7 +19,8 @@ namespace project_alfred.Modules
             var std = new SongRecord()
             {
                 user = Context.User.Id,
-                url = url.Value
+                url = url.Value,
+                publishedAt = Context.Message.Timestamp.UtcDateTime
             };
             
             var context = new SongRecordContext();

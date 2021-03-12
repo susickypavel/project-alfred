@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
+
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+
 using project_alfred.Services;
 
 namespace project_alfred
@@ -22,7 +24,12 @@ namespace project_alfred
 
         private ServiceProvider GetServices()
         {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+            
             var services = new ServiceCollection()
+                .AddSingleton<IConfigurationRoot>(config)
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<LoggerService>()
                 .AddSingleton<BootService>();

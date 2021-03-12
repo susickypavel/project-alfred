@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 
 namespace project_alfred.Services
 {
@@ -10,11 +11,13 @@ namespace project_alfred.Services
     {
         private readonly DiscordSocketClient _client;
         private readonly LoggerService _logger;
+        private readonly IConfigurationRoot _config;
 
-        public BootService(DiscordSocketClient client, LoggerService logger)
+        public BootService(DiscordSocketClient client, LoggerService logger, IConfigurationRoot config)
         {
             this._client = client;
             this._logger = logger;
+            this._config = config;
 
             this._client.Log += _logger.Log;
         }
@@ -23,9 +26,7 @@ namespace project_alfred.Services
         {
             try
             {
-                var token = "token";
-            
-                await _client.LoginAsync(TokenType.Bot, token);
+                await _client.LoginAsync(TokenType.Bot, _config["DISCORD_TOKEN"]);
                 await _client.StartAsync();
             }
             catch (Exception error)

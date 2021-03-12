@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ namespace project_alfred
         {
             var services = GetServices();
 
+            await services.GetRequiredService<CommandHandler>().InstallCommandsAsync();
             var boot = services.GetRequiredService<BootService>();
 
             await boot.Start();
@@ -27,13 +29,15 @@ namespace project_alfred
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();
-            
+
             var services = new ServiceCollection()
                 .AddSingleton<IConfigurationRoot>(config)
                 .AddSingleton<DiscordSocketClient>()
+                .AddSingleton<CommandService>()
                 .AddSingleton<LoggerService>()
-                .AddSingleton<BootService>();
-
+                .AddSingleton<BootService>()
+                .AddSingleton<CommandHandler>();
+            
             return services.BuildServiceProvider();
         }
     }

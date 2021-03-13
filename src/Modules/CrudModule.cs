@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 
 using Discord.Commands;
+using project_alfred.TypeReaders;
 
 namespace project_alfred.Modules
 {
@@ -8,9 +9,9 @@ namespace project_alfred.Modules
     {
         [Command("add")]
         [Summary("TODO: add")]
-        public async Task Add()
+        public async Task Add(Url url)
         {
-            await ReplyAsync("Hello, World!");
+            await ReplyAsync($"Hello, World! {url.Value} is {url.IsValid}");
         }
     }
 }

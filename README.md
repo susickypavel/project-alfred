@@ -1,1 +1,1 @@
-# project-alfred
+# Project Alfred

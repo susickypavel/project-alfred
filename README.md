@@ -1,1 +1,1 @@
-# Project Alfred
+# Project Alfred - Discord Bot

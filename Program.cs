@@ -1,36 +1,42 @@
-﻿using Discord;
-using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
-using project_alfred.logger;
-using project_alfred.utils;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using project_alfred.services;
 
 namespace project_alfred
 {
     internal class Program
     {
-        private readonly Logger _logger = new Logger();
-        
-        private DiscordSocketClient _client;
-        
-        private static Task Main(string[] args) => new Program().MainAsync();
-
-        private async Task MainAsync()
+        private static async Task Main(string[] args)
         {
-            var credentialsConfiguration = new CredentialsConfiguration();
-            
-            new ConfigurationBuilder()
-                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                    .AddJsonFile("appsettings.json")
-                    .Build()
-                    .Bind(credentialsConfiguration);
-            
-            _client = new DiscordSocketClient();
-            _client.Log += _logger.Log;
-            
-            await _client.LoginAsync(TokenType.Bot, credentialsConfiguration.DISCORD_BOT_TOKEN);
-            await _client.StartAsync();
-            
-            await Task.Delay(-1);
+            var hostBuilder = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    config.AddJsonFile("appsettings.json");
+                    config.AddEnvironmentVariables();
+                    
+                    // NOTE:
+                    // 
+                    // if (args != null)
+                    // {
+                    //     config.AddCommandLine(args);
+                    // }
+                })
+                .ConfigureLogging((context, logging) =>
+                {
+                    logging.AddSimpleConsole(c =>
+                    {
+                        c.TimestampFormat = "[dd.MM.yyyy HH:mm:ss] ";
+                    });
+                })
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddSingleton<CustomLogger>();
+                    services.AddHostedService<DiscordClient>();
+                }).Build();
+
+            await hostBuilder.RunAsync();
         }
     }
 }

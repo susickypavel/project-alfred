@@ -32,7 +32,6 @@ namespace project_alfred
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddSingleton<CustomLogger>();
                     services.AddHostedService<DiscordClient>();
                 }).Build();
 

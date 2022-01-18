@@ -9,7 +9,6 @@ namespace project_alfred.services;
 public class DiscordClient : IHostedService
 {
     private readonly ILogger<DiscordClient> _logger;
-    private readonly CustomLogger _customLogger;
     private readonly IConfiguration _config;
 
     private readonly DiscordSocketClient _client = new(new DiscordSocketConfig()
@@ -18,10 +17,9 @@ public class DiscordClient : IHostedService
         ConnectionTimeout = 20_000
     });
 
-    public DiscordClient(ILogger<DiscordClient> logger, IConfiguration config, CustomLogger customLogger)
+    public DiscordClient(ILogger<DiscordClient> logger, IConfiguration config)
     {
         _logger = logger;
-        _customLogger = customLogger;
         _config = config;
     }
 
@@ -30,17 +28,51 @@ public class DiscordClient : IHostedService
         _client.LoginAsync(TokenType.Bot, _config.GetValue<string>("DISCORD_BOT_TOKEN"));
         _client.StartAsync();
 
-        _client.Log += _customLogger.Log; 
+        _client.Log += Log; 
 
         _logger.LogInformation("Connection successful.");
         return Task.CompletedTask;
     }
-
+    
     public Task StopAsync(CancellationToken cancellationToken)
     {
         _client.StopAsync();
         
         _logger.LogInformation("Ending Discord Service now.");
         return Task.CompletedTask;
+    }
+    
+    /**
+     * NOTE: This was supposed to be extracted to a ICustomLogger, but the level of complexity it brings is overwhelming.
+     *
+     * However, it should probably be refactored later (if needed)
+     */
+    private Task Log(LogMessage arg)
+    {
+        _logger.Log(ConvertLogSeverityToLevel(arg.Severity), $"[{arg.Source}]: {arg.Message}");
+
+        return Task.CompletedTask;
+    }
+
+    private LogLevel ConvertLogSeverityToLevel(LogSeverity severity)
+    {
+        switch (severity)
+        {
+            case LogSeverity.Critical:
+                return LogLevel.Critical;
+            case LogSeverity.Error:
+                return LogLevel.Error;
+            case LogSeverity.Warning:
+                return LogLevel.Warning;
+            case LogSeverity.Info:
+                return LogLevel.Information;
+            case LogSeverity.Verbose:
+                return LogLevel.Trace;
+            case LogSeverity.Debug:
+                return LogLevel.Debug;
+            default:
+                _logger.LogWarning($"Unknown severity '{severity}'.");
+                return LogLevel.None;
+        }
     }
 }

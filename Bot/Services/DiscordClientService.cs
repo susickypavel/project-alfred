@@ -15,7 +15,7 @@ public class DiscordClientService : IHostedService
 
     public DiscordClientService(ILogger<DiscordClientService> logger, IConfiguration configuration)
     {
-        _token = configuration["Bot:TOKEN"];
+        _token = configuration["DISCORD_BOT_TOKEN"];
         _logger = logger;
         _client = new DiscordSocketClient();
         _client.Log += Log;
@@ -57,7 +57,7 @@ public class DiscordClientService : IHostedService
             case LogSeverity.Debug:
                 return LogLevel.Debug;
             default:
-                _logger.LogWarning("Unknown severity '{Severity}'", severity);
+                _logger.LogWarning("Unknown severity '{Severity}'", Enum.GetName(severity));
                 return LogLevel.None;
         }
     }

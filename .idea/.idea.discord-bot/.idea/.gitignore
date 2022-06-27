@@ -1,11 +1,11 @@
-# Default ignored files
+﻿# Default ignored files
 /shelf/
 /workspace.xml
 # Rider ignored files
+/.idea.discord-bot.iml
+/contentModel.xml
 /modules.xml
 /projectSettingsUpdater.xml
-/.idea.project-alfred.iml
-/contentModel.xml
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files

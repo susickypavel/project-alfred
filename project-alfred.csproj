@@ -9,4 +9,8 @@
         <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Discord.Net" Version="3.7.2" />
+    </ItemGroup>
+
 </Project>

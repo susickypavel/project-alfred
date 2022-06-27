@@ -11,18 +11,19 @@ public class DiscordClientService : IHostedService
     private readonly ILogger<DiscordClientService> _logger;
     private readonly DiscordSocketClient _client;
 
+    private readonly string _token;
+
     public DiscordClientService(ILogger<DiscordClientService> logger, IConfiguration configuration)
     {
-
+        _token = configuration["Bot:TOKEN"];
         _logger = logger;
         _client = new DiscordSocketClient();
         _client.Log += Log;
-        
-        _client.LoginAsync(TokenType.Bot, configuration["Bot:TOKEN"]);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        await _client.LoginAsync(TokenType.Bot, _token);
         await _client.StartAsync();
         _logger.LogInformation("Successfully started");
     }

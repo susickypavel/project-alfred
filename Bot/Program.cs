@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Discord;
+using Discord.Commands;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using project_alfred.Services;
@@ -12,6 +14,11 @@ var host = Host.CreateDefaultBuilder(args)
         (_, services) =>
         {
             services.AddHostedService<DiscordClientService>();
+            services.AddSingleton(new CommandService(new CommandServiceConfig()
+            {
+                CaseSensitiveCommands = false,
+                LogLevel = LogSeverity.Info,
+            }));
         })
     .Build();
 

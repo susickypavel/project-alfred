@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using project_alfred.TypeReaders;
+using project_alfred.Utils;
 
 namespace project_alfred.Services;
 
@@ -61,32 +62,10 @@ public class DiscordClientService : IHostedService
         await _client.LogoutAsync();
         _logger.LogInformation("Successfully stopped");
     }
-    
+
     private Task Log(LogMessage arg)
     {
-        _logger.Log(ConvertLogSeverityToLevel(arg.Severity), "{Arg.Message}", arg.Message);
+        _logger.Log(DiscordUtils.ConvertLogSeverityToLevel(arg.Severity), "{Arg.Message}", arg.Message);
         return Task.CompletedTask;
-    }
-
-    private LogLevel ConvertLogSeverityToLevel(LogSeverity severity)
-    {
-        switch (severity)
-        {
-            case LogSeverity.Critical:
-                return LogLevel.Critical;
-            case LogSeverity.Error:
-                return LogLevel.Error;
-            case LogSeverity.Warning:
-                return LogLevel.Warning;
-            case LogSeverity.Info:
-                return LogLevel.Information;
-            case LogSeverity.Verbose:
-                return LogLevel.Trace;
-            case LogSeverity.Debug:
-                return LogLevel.Debug;
-            default:
-                _logger.LogWarning("Unknown severity '{Severity}'", Enum.GetName(severity));
-                return LogLevel.None;
-        }
     }
 }

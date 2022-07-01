@@ -5,6 +5,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using project_alfred.TypeReaders;
 
 namespace project_alfred.Services;
 
@@ -47,7 +48,11 @@ public class DiscordClientService : IHostedService
     {
         await _client.LoginAsync(TokenType.Bot, _token);
         await _client.StartAsync();
+        
+        _command.AddTypeReader(typeof(Url), new UrlTypeReader());
+        
         await _command.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+        
         _logger.LogInformation("Successfully started");
     }
 

@@ -2,6 +2,7 @@ using Discord.Commands;
 using Domain.Context;
 using Domain.Entity;
 using Microsoft.Extensions.Logging;
+using project_alfred.TypeReaders;
 
 namespace project_alfred.Commands;
 
@@ -19,7 +20,7 @@ public class SongModule : ModuleBase<SocketCommandContext>
     
     [Command("add")]
     [Summary("Adds song to database.")]
-    public async Task AddSong([Summary("URL of the song to be added.")] string url)
+    public async Task AddSong([Summary("URL of the song to be added.")] Url url)
     {
         try
         {
@@ -27,7 +28,7 @@ public class SongModule : ModuleBase<SocketCommandContext>
 
             if (song != null)
             {
-                _logger.LogInformation("User '{User}' tried to add '{Url}', which he already had", Context.User.ToString(), url);
+                _logger.LogInformation("User '{User}' tried to add '{Url}', which he already had", Context.User.ToString(), url.Value);
                 await ReplyAsync("Song already added");
                 return;
             }
@@ -35,11 +36,11 @@ public class SongModule : ModuleBase<SocketCommandContext>
             await _context.Songs.AddAsync(new SongRecord()
             {
                 OriginalPoster = Context.User.ToString(),
-                OriginalUrl = url
+                OriginalUrl = url.Value
             });
             await _context.SaveChangesAsync();
             await ReplyAsync("Song added");
-            _logger.LogInformation("User '{User}' added '{Url}'", Context.User.ToString(), url);
+            _logger.LogInformation("User '{User}' added '{Url}'", Context.User.ToString(), url.Value);
         }
         catch (Exception e)
         {

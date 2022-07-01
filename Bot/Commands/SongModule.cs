@@ -1,4 +1,6 @@
 using Discord.Commands;
+using Domain.Context;
+using Domain.Entity;
 using Microsoft.Extensions.Logging;
 
 namespace project_alfred.Commands;
@@ -7,16 +9,42 @@ namespace project_alfred.Commands;
 public class SongModule : ModuleBase<SocketCommandContext>
 {
     private readonly ILogger<SongModule> _logger;
+    private readonly ProjectAlfredContext _context;
 
-    public SongModule(ILogger<SongModule> logger)
+    public SongModule(ILogger<SongModule> logger, ProjectAlfredContext context)
     {
         _logger = logger;
+        _context = context;
     }
     
     [Command("add")]
-    public Task AddSong()
+    [Summary("Adds song to database.")]
+    public async Task AddSong([Summary("URL of the song to be added.")] string url)
     {
-        _logger.LogInformation("Adding song");
-        return Task.CompletedTask;
+        try
+        {
+            var song = await _context.Songs.FindAsync(url, Context.User.ToString());
+
+            if (song != null)
+            {
+                _logger.LogInformation("User '{User}' tried to add '{Url}', which he already had", Context.User.ToString(), url);
+                await ReplyAsync("Song already added");
+                return;
+            }
+
+            await _context.Songs.AddAsync(new SongRecord()
+            {
+                OriginalPoster = Context.User.ToString(),
+                OriginalUrl = url
+            });
+            await _context.SaveChangesAsync();
+            await ReplyAsync("Song added");
+            _logger.LogInformation("User '{User}' added '{Url}'", Context.User.ToString(), url);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("{Message}", e.Message);
+            await ReplyAsync("Something went wrong");
+        }
     }
 }

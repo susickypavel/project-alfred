@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Domain.Context;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +20,7 @@ var host = Host.CreateDefaultBuilder(args)
                 CaseSensitiveCommands = false,
                 LogLevel = LogSeverity.Info,
             }));
+            services.AddDbContext<ProjectAlfredContext>();
         })
     .Build();
 

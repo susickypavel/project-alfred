@@ -1,3 +1,4 @@
+using Discord;
 using Discord.Commands;
 using Domain.Context;
 using Domain.Entity;
@@ -24,7 +25,7 @@ public class SongModule : ModuleBase<SocketCommandContext>
     {
         try
         {
-            var song = await _context.Songs.FindAsync(url, Context.User.ToString());
+            var song = await _context.Songs.FindAsync(url.Value, Context.User.ToString());
 
             if (song != null)
             {
@@ -39,7 +40,12 @@ public class SongModule : ModuleBase<SocketCommandContext>
                 OriginalUrl = url.Value
             });
             await _context.SaveChangesAsync();
-            await ReplyAsync("Song added");
+            
+            var message = await ReplyAsync("Song added");
+            
+            await message.AddReactionAsync(Emoji.Parse("👍"));
+            await message.AddReactionAsync(Emoji.Parse("🦄"));
+
             _logger.LogInformation("User '{User}' added '{Url}'", Context.User.ToString(), url.Value);
         }
         catch (Exception e)

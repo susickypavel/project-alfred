@@ -18,9 +18,9 @@ public class TestController : ControllerBase
     }
 
     [HttpGet(Name = "test")]
-    public SongRecord Get()
+    public SongRecord? Get()
     {
         _logger.LogInformation("Fetch the First SongRecord");
-        return _context.Songs.First();
+        return _context.Songs.FirstOrDefault();
     }
 }

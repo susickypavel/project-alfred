@@ -6,6 +6,7 @@ namespace Domain.Context;
 public class ProjectAlfredContext : DbContext
 {
     public DbSet<SongRecord> Songs { get; set; }
+    public DbSet<MusicChannel> MusicChannels { get; set; }
 
     private string DbPath { get; }
 

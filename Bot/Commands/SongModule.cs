@@ -40,9 +40,10 @@ public class SongModule : ModuleBase<SocketCommandContext>
                 return;
             }
             
-            var song = await _context.Songs.FindAsync(url.Value, Context.User.ToString());
-
-            if (song != null)
+            var isDuplicate = await _context.Songs
+                .AnyAsync(s => s.OriginalUrl == url.Value && s.OriginalPoster == Context.User.ToString());
+            
+            if (isDuplicate)
             {
                 _logger.LogInformation("User '{User}' tried to add '{Url}', which he already had", Context.User.ToString(), url.Value);
                 await ReplyAsync("Song already added");

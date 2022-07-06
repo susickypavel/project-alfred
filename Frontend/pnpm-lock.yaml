@@ -6,6 +6,7 @@ specifiers:
   '@types/react': ^18.0.15
   '@types/react-dom': ^18.0.6
   next: ^12.2.0
+  preact: ^10.9.0
   react: ^18.2.0
   react-dom: ^18.2.0
   typescript: ^4.7.4
@@ -13,6 +14,7 @@ specifiers:
 dependencies:
   '@nextui-org/react': 1.0.0-beta.9_biqbaboplfbrettd7655fr4n2y
   next: 12.2.0_biqbaboplfbrettd7655fr4n2y
+  preact: 10.9.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
 
@@ -1040,6 +1042,10 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: false
+
+  /preact/10.9.0:
+    resolution: {integrity: sha512-jO6/OvCRL+OT8gst/+Q2ir7dMybZAX8ioP02Zmzh3BkQMHLyqZSujvxbUriXvHi8qmhcHKC2Gwbog6Kt+YTh+Q==}
     dev: false
 
   /prop-types/15.8.1:

@@ -2,6 +2,7 @@ using Discord;
 using Discord.Commands;
 using Domain.Context;
 using Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using project_alfred.TypeReaders;
 
@@ -25,6 +26,20 @@ public class SongModule : ModuleBase<SocketCommandContext>
     {
         try
         {
+            var musicChannel = await _context.MusicChannels.SingleOrDefaultAsync(mc => mc.GuildId == Context.Guild.Id);
+            
+            if (musicChannel == null)
+            {
+                await ReplyAsync("This server has no Music Channel assigned. Use !config channel set <CHANNEL>.");
+                return;
+            }
+
+            if (Context.Channel.Id != musicChannel.MusicChannelId)
+            {
+                await ReplyAsync($"This isn't the assigned Music Channel. Use command in {MentionUtils.MentionChannel(musicChannel.MusicChannelId)}");
+                return;
+            }
+            
             var song = await _context.Songs.FindAsync(url.Value, Context.User.ToString());
 
             if (song != null)

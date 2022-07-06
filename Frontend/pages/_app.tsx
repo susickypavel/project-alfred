@@ -1,11 +1,28 @@
-import { NextUIProvider } from "@nextui-org/react";
+import Head from "next/head";
+import { AppProps } from "next/app";
+import { MantineProvider } from "@mantine/core";
 
-function App({ Component, pageProps }) {
+export default function App(props: AppProps) {
+  const { Component, pageProps } = props;
+
   return (
-    <NextUIProvider>
-      <Component {...pageProps} />
-    </NextUIProvider>
+    <>
+      <Head>
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width"
+        />
+      </Head>
+
+      <MantineProvider
+        withGlobalStyles
+        withNormalizeCSS
+        theme={{
+          colorScheme: "light",
+        }}
+      >
+        <Component {...pageProps} />
+      </MantineProvider>
+    </>
   );
 }
-
-export default App;

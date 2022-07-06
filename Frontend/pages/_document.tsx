@@ -1,30 +1,15 @@
-import React from "react";
-import Document, {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentContext,
-  DocumentInitialProps,
-} from "next/document";
-import { CssBaseline } from "@nextui-org/react";
+import { createGetInitialProps } from "@mantine/next";
+import Document, { Head, Html, Main, NextScript } from "next/document";
 
-class MyDocument extends Document {
-  static async getInitialProps(
-    ctx: DocumentContext
-  ): Promise<DocumentInitialProps> {
-    const initialProps = await Document.getInitialProps(ctx);
+const getInitialProps = createGetInitialProps();
 
-    return {
-      ...initialProps,
-      styles: React.Children.toArray([initialProps.styles]),
-    };
-  }
+export default class _Document extends Document {
+  static getInitialProps = getInitialProps;
 
   render() {
     return (
-      <Html lang="en">
-        <Head>{CssBaseline.flush()}</Head>
+      <Html>
+        <Head />
         <body>
           <Main />
           <NextScript />
@@ -33,5 +18,3 @@ class MyDocument extends Document {
     );
   }
 }
-
-export default MyDocument;

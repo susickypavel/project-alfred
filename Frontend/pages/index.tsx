@@ -1,5 +1,6 @@
-import { Button } from "@nextui-org/react";
-import { NextPage } from "next";
+import { Button } from "@mantine/core";
+
+import type { NextPage } from "next";
 
 const IndexPage: NextPage = () => {
   return (
